@@ -47,7 +47,7 @@
                             placeholder="Click the start button to begin the test"></textarea>
                     </div>
                     <div class="mb-3 text-center">
-                        <button class="btn btn-lg btn-outline-orange" id="start-btn">Start</button>
+                        <button class="btn btn-lg btn-outline-orange" id="startButton">Start</button>
                         <button class="btn btn-lg btn-outline-orange" id="stop-btn">Stop</button>
                         <button class="btn btn-lg btn-outline-orange" id="retry-btn">Retry</button>
                     </div>
@@ -100,11 +100,50 @@
             }
             return texts[Math.floor(Math.random() * texts.length)];
         }
+        let startTime, endTime;
 
+        function startTest() {
+            startTime = new Date();
+            document.getElementById('startButton').disabled = true;
+            document.getElementById('stop-btn').disabled = false;
+            document.getElementById('user-input').focus();
+        }
+
+        function stopTest() {
+            endTime = new Date();
+            const timeTaken = (endTime - startTime) / 1000;
+            document.getElementById('time').innerText = timeTaken.toFixed(2);
+            document.getElementById('startButton').disabled = false;
+            document.getElementById('stop-btn').disabled = true;
+
+            const sampleText = document.getElementById('sample-text').innerText;
+            const userInput = document.getElementById('user-input').value;
+            const words = sampleText.split(' ');
+            const userWords = userInput.split(' ');
+            let correctWords = 0;
+
+            for (let i = 0; i < words.length; i++) {
+                if (words[i] === userWords[i]) {
+                    correctWords++;
+                }
+            }
+
+            const wpm = Math.round((correctWords / timeTaken) * 60);
+            document.getElementById('wpm').innerText = wpm;
+
+            const difficulty = document.getElementById('difficulty').value;
+            document.getElementById('level').innerText = difficulty.charAt(0).toUpperCase() + difficulty.slice(1);
+
+            // Clear the typing box
+            document.getElementById('user-input').value = '';
+        }
+
+        document.getElementById('startButton').addEventListener('click', startTest);
+        document.getElementById('stop-btn').addEventListener('click', stopTest);
         document.getElementById('startButton').addEventListener('click', () => {
-            const difficulty = prompt("Enter difficulty level (easy, medium, hard):").toLowerCase();
+            const difficulty = document.getElementById('difficulty').value;
             const randomText = getRandomText(difficulty);
-            document.getElementById('sampleText').innerText = randomText;
+            document.getElementById('sample-text').innerText = randomText;
         });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.min.js"></script>
